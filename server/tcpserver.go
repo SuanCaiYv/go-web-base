@@ -15,7 +15,7 @@ func work(tcpConn *net.TCPConn) {
 		}
 	}(tcpConn)
 	// 设置30秒未读到就关闭本次请求，这里是所有读取的总时长！！！
-	_ = tcpConn.SetReadDeadline(time.Now().Add(30 * time.Second))
+	_ = tcpConn.SetReadDeadline(time.Now().Add(10 * time.Second))
 	request := make([]byte, 1024)
 	// 可能客户端在建立了连接后，会请求好几次。
 	// 所以此时不能草率的结束。
@@ -23,6 +23,8 @@ func work(tcpConn *net.TCPConn) {
 		readLen, err := tcpConn.Read(request)
 		fmt.Println(readLen)
 		if err != nil {
+			fmt.Println("client offline")
+			log.Fatal(err)
 			return
 		}
 		// 说明连接断了
