@@ -2,29 +2,15 @@ package main
 
 import (
 	"../server"
+	"math"
 	"time"
 )
 import "../client"
 
-/**
-在这里说明一下，客户端连接建立后会得到一个TcpConn类型的对象，对应于Java中的Socket；
-
-服务端的Listener(ServerSocket)在Accept()一个客户端的连接后同样会创建一个TcpConn类型的对象；
-
-每次连接建立->客户端发送一个请求->服务端处理->返回->连接关闭；想要再次请求需要再次连接，如此往复；
-
-如果客户端不想只请求一次，那么服务端可以设置读取超时，在这个时间内客户端可以发送多个请求，服务端读取多个请求，然后对每个处理，响应每一个；
-
-一个请求无法被分割，每次读取到的请求，都是一个完整的请求；请求与请求之间存在分隔符(不可见)，所以系统会自动分割不同的请求；
-
-在一个连接上进行多次请求有点类似长连接，但是不是一样的；长连接的维护是OS实现的，对应用进程来说是透明的；设置长时间多次读取是应用程序实现的；
-
-对于Http的长连接请求来说，是建立在TCP长连接的基础上，由类库自动从多次请求中分割出来然后赋给用户代码；
-*/
 func main() {
+	server.ServeHttp()
 	go server.Serve()
 	time.Sleep(10 * time.Millisecond)
 	go client.Work()
-	for {
-	}
+	time.Sleep(time.Duration(math.MaxUint32) * time.Second)
 }
