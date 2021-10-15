@@ -11,19 +11,25 @@ import (
 )
 
 // 最普通的版本
-func server(tcpConn *net.TCPConn) {
+func server(socket *net.TCPConn) {
 	defer func(tcpConn *net.TCPConn) {
 		err := tcpConn.Close()
 		if err != nil {
 			log.Fatal(err)
 		}
-	}(tcpConn)
-	request := make([]byte, 1024)
-	readLen, _ := tcpConn.Read(request)
-	msg := string(request[:readLen])
-	fmt.Println(msg)
-	msg = "echo: " + msg
-	_, _ = tcpConn.Write([]byte(msg))
+	}(socket)
+	for {
+		request := make([]byte, 1024)
+		readLen, err := socket.Read(request)
+		if err == io.EOF {
+			fmt.Println("连接关闭")
+			return
+		}
+		msg := string(request[:readLen])
+		fmt.Println(msg)
+		msg = "echo: " + msg
+		_, _ = socket.Write([]byte(msg))
+	}
 }
 
 // 基于分隔符的版本
@@ -103,12 +109,12 @@ func Serve() {
 	}
 	for {
 		// 每次连接建立返回一个Connection，Connection对应Socket
-		tcpConn, err := serverSocket.AcceptTCP()
+		socket, err := serverSocket.AcceptTCP()
 		fmt.Println("connection established...")
 		if err != nil {
 			log.Fatal(err)
 		}
 		// 开辟Goroutine去处理新的连接
-		go serverClientLengthBased(tcpConn)
+		go server(socket)
 	}
 }

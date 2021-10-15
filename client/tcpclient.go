@@ -8,6 +8,23 @@ import (
 	"net"
 )
 
+func client() {
+	tcpAddr, _ := net.ResolveTCPAddr("tcp", "127.0.0.1:8190")
+	socket, _ := net.DialTCP("tcp", nil, tcpAddr)
+	defer func(socket *net.TCPConn) {
+		_ = socket.Close()
+	}(socket)
+	var input string
+	fmt.Println("input for 5 loops")
+	for i := 0; i < 5; i++ {
+		_, _ = fmt.Scanf("%s", &input)
+		_, _ = socket.Write([]byte(input))
+		response := make([]byte, 1024)
+		readLen, _ := socket.Read(response)
+		fmt.Println(string(response[:readLen]))
+	}
+}
+
 func clientDelimiterBased() {
 	tcpAddr, err := net.ResolveTCPAddr("tcp", "127.0.0.1:8190")
 	if err != nil {
@@ -65,5 +82,5 @@ func clientLengthBased() {
 }
 
 func Work() {
-	clientLengthBased()
+	client()
 }

@@ -8,7 +8,7 @@ import (
 import "../client"
 
 func main() {
-	server.ServeHttp()
+	// server.ServeHttp()
 	go server.Serve()
 	time.Sleep(10 * time.Millisecond)
 	go client.Work()
