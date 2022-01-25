@@ -1,11 +1,11 @@
 package main
 
 import (
-	"../server"
+	"go-web-base/client"
+	"go-web-base/server"
 	"math"
 	"time"
 )
-import "../client"
 
 func main() {
 	// server.ServeHttp()

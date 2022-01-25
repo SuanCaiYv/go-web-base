@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
+	"path/filepath"
 )
 
 func client() {
@@ -81,6 +83,26 @@ func clientLengthBased() {
 	}
 }
 
+func largeTransform() {
+	tcpAddr, err := net.ResolveTCPAddr("tcp", "127.0.0.1:8190")
+	if err != nil {
+		log.Fatal(err)
+	}
+	socket, err := net.DialTCP("tcp", nil, tcpAddr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	filePath, _ := filepath.Abs("client/IMG_1067.PNG")
+	fmt.Println(filePath)
+	file, _ := os.OpenFile(filePath, os.O_RDONLY, os.ModePerm)
+	fileInfo, _ := file.Stat()
+	fmt.Printf("total: %d\n", fileInfo.Size())
+	content := make([]byte, fileInfo.Size(), fileInfo.Size())
+	_, _ = file.Read(content)
+	n, _ := socket.Write(content)
+	fmt.Println(n)
+}
+
 func Work() {
-	client()
+	largeTransform()
 }

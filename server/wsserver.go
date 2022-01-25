@@ -1,10 +1,5 @@
 package server
 
-import (
-	"github.com/gorilla/websocket"
-	"net/http"
-)
-
 // WsServe WebSocket协议弥补了HTTP的不足——无法实现全双工通信；它的基本工作原理如下：
 // 它和HTTP一样，都是需要建立连接的，所以为了建立
 // 安全连接，它需要先握手，而握手的方式考虑到了兼容性和省事，直接用了HTTP Get请求来完成。
@@ -25,23 +20,4 @@ import (
 // 以上就是大致原理，其实很简单，完全可以自行实现WebSocket。
 // 读取请求 => 是否是升级请求 => 接管Socket => 写出升级响应 => 不关闭Socket连接 => 全双工读写 => 执行收尾。
 func WsServe() {
-}
-
-var upgrader = websocket.Upgrader{
-	HandshakeTimeout:  0,
-	ReadBufferSize:    1024,
-	WriteBufferSize:   1024,
-	WriteBufferPool:   nil,
-	Subprotocols:      nil,
-	Error:             nil,
-	CheckOrigin:       nil,
-	EnableCompression: false,
-}
-
-func handle(writer http.ResponseWriter, request *http.Request) {
-	connection, err := upgrader.Upgrade(writer, request, nil)
-	if err != nil {
-		return
-	}
-	connection.ReadMessage()
 }
